@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "ApplicationInsights_Worker": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7253",
+      "environmentVariables": {
+        "TZ": "Asia/Tokyo",
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "e2dbc3cf-0d4f-4e49-b68e-51883b3ce4a5",
+        "STORAGE_CONNECT_STRING": "DefaultEndpointsProtocol=https;AccountName=stosatestdev001;EndpointSuffix=core.windows.net;AccountKey=MmEwS1EFn6MxPgEYx8wKXp1xeY70lLPkZuFZUryHT6NDuw/Sl9cP/3XY3FFiyAFKf5ZM2r5xWOdW+AStmCsaWw==",
+        "KQL_APPLICATION_ID": "12d5caff-02f4-42a9-bab6-a02d1f018c34",
+        "KQL_APPLICATION_API_KEY": "0xn7xabz8pean04lwcrhk2wnbtyy8itmj5xx7i0e",
+        "KQL_MAIN_QUERY_REGION": "traces | project timestamp, message, client_StateOrProvince, client_City",
+        "KQL_ORDER_BY_REGION": " | order by timestamp desc",
+        "KQL_WHERE_REGION": " | where timestamp >= datetime(TARGET_FROM) and timestamp <= datetime(TARGET_TO) and message contains 'AlphaProcessAsync'",
+        "KQL_WHERE_REGION_TIME_SPAN": "-12",
+        "BLOB_CONTAINER_NAME_OPE_LOG": "aggregate"
+      },
+      "OUTPUT_FILE_NAME_OPE_LOG": "Covid_Survey_Operation.csv",
+      "BLOB_CONTAINER_NAME_FILE_AQUISITION": "surveytest"
+    }
+  }
+}
