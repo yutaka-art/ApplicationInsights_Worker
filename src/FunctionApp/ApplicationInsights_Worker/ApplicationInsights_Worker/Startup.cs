@@ -13,9 +13,9 @@ namespace ApplicationInsights_Worker
     public class Startup : FunctionsStartup
     {
         /// <summary>
-        /// DI Config
+        /// This method is called to configure the DI container.
         /// </summary>
-        /// <param name="builder"></param>
+        /// <param name="builder">Azure Functions host builder</param>
         public override void Configure(IFunctionsHostBuilder builder)
         {
             var services = builder.Services;
@@ -24,28 +24,30 @@ namespace ApplicationInsights_Worker
 
             var conStorageString = Environment.GetEnvironmentVariable("STORAGE_CONNECT_STRING");
 
-            // サービスのDI設定を行う
-            services.AddTransient<IStorageProvider, StorageProvider>();
-            services.AddTransient<IApplicationInsightsProvider, ApplicationInsightsProvider>();
-            services.AddHttpClient<IApplicationInsightsProvider, ApplicationInsightsProvider>().
-                SetHandlerLifetime(TimeSpan.FromMinutes(5));
+            // Register dependencies
+            services.AddScoped<IStorageProvider, StorageProvider>();
+            services.AddScoped<IApplicationInsightsProvider, ApplicationInsightsProvider>();
+            services.AddHttpClient<IApplicationInsightsProvider, ApplicationInsightsProvider>()
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+            services.AddScoped<ITelemetryService, TelemetryService>();
 
-            services.AddTransient<ITelemetryService, TelemetryService>();
-
+            // Configure Azure clients
             services.AddAzureClients(builder =>
             {
-                // Blob設定
                 builder.AddBlobServiceClient(conStorageString)
-                .ConfigureOptions(options => {
+                .ConfigureOptions(options =>
+                {
+                    // Set exponential retry policy for BlobServiceClient
                     options.Retry.Mode = Azure.Core.RetryMode.Exponential;
                     options.Retry.MaxRetries = 5;
                     options.Retry.MaxDelay = TimeSpan.FromSeconds(120);
                 });
 
-                // File設定
+                // Add FileServiceClient
                 builder.AddFileServiceClient(conStorageString)
                 .ConfigureOptions(options =>
                 {
+                    // Set exponential retry policy for FileServiceClient
                     options.Retry.Mode = Azure.Core.RetryMode.Exponential;
                     options.Retry.MaxRetries = 5;
                     options.Retry.MaxDelay = TimeSpan.FromSeconds(120);
@@ -53,6 +55,5 @@ namespace ApplicationInsights_Worker
             });
 
         }
-
     }
 }

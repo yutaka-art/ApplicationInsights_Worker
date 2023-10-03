@@ -20,15 +20,21 @@ namespace ApplicationInsights_Worker
 
         #region [EntryPoint]
         /// <summary>
-        /// EntryPoint
+        /// Constructor with parameter telemetryService
         /// </summary>
-        /// <param name="telemetryService"></param>
+        /// <param name="telemetryService">Instance of ITelemetryService</param>
         public EntryPoint(ITelemetryService telemetryService)
         {
             this.TelemetryService = telemetryService;
         }
         #endregion
 
+        /// <summary>
+        /// Runs the Alpha process when triggered by an HttpTrigger
+        /// </summary>
+        /// <param name="req">HttpRequest object</param>
+        /// <param name="log">ILogger object</param>
+        /// <returns>IActionResult object</returns>
         [FunctionName("Alpha")]
         public IActionResult RunAlphaProcess(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
@@ -51,6 +57,12 @@ namespace ApplicationInsights_Worker
             return new OkObjectResult(JsonConvert.SerializeObject(returnModel, Formatting.Indented));
         }
 
+        /// <summary>
+        /// Runs the Bravo process asynchronously when triggered by an HttpTrigger
+        /// </summary>
+        /// <param name="req">HttpRequest object</param>
+        /// <param name="log">ILogger object</param>
+        /// <returns>Task of IActionResult object</returns>
         [FunctionName("Bravo")]
         public async Task<IActionResult> RunBravoProcessAsync(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
