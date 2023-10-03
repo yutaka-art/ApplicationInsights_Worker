@@ -12,7 +12,7 @@ namespace ApplicationInsights_Worker.Services
         /// Alpha
         /// </summary>
         /// <param name="name"></param>
-        void AlphaProcessAsync(string name);
+        void AlphaProcess(string name);
 
         /// <summary>
         /// Bravo
@@ -54,7 +54,7 @@ namespace ApplicationInsights_Worker.Services
         /// Alpha
         /// </summary>
         /// <param name="name"></param>
-        public void AlphaProcessAsync(string name)
+        public void AlphaProcess(string name)
         {
             for (int i = 0; i < 5; i++)
             {
